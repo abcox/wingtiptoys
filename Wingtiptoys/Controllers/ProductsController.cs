@@ -22,25 +22,25 @@ namespace Wingtiptoys.Controllers
 
         // GET: api/Products
         [HttpGet]
-        public async Task<IActionResult> GetProducts([FromQuery] ProductFilter filter)
+        public async Task<IActionResult> GetProducts([FromQuery] ProductFilter filter, string search)
         {
-            if (string.IsNullOrEmpty(filter.CategoryName))
+            IQueryable<Products> products = _context.Products;
+
+            if (!string.IsNullOrEmpty(filter.CategoryName))
             {
-                return Ok(await _context.Products.ToListAsync());
+                products =
+                    from p in products
+                    .Include(p => p.Category)
+                    .Where(p => p.Category.CategoryName.Equals(filter.CategoryName))
+                    select p;
             }
-            else
+            if (!string.IsNullOrEmpty(search) && search.Length >= 2)
             {
-                //return Ok(await _context.Categories
-                //    .Include(p => p.Products)
-                //    .Where(p => p.CategoryName == filter.CategoryName)
-                //    .Select(c => c.Products)
-                //    .ToListAsync());
-                return Ok(from p in await _context.Products
-                          .Include(p => p.Category)
-                          .Where(p => p.Category.CategoryName.Equals(filter.CategoryName))
-                          .ToListAsync()
-                          select p);
+                products = from p in products
+                           where p.ProductName.Contains(search) || p.Description.Contains(search)
+                           select p;
             }
+            return Ok(await products.ToListAsync());
         }
 
         // GET: api/Products/5

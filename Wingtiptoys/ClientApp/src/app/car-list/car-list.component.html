@@ -1,8 +1,24 @@
 <h1 id="tableLabel">Cars</h1>
 
-<p>Here we have {{products.length}} car{{products.length===1 ? '' : 's'}}.</p>
-
 <p *ngIf="!products"><em>Loading...</em></p>
+
+<!--<div *ngIf="products" class="form-group has-search">
+  <span class="fa fa-search form-control-feedback"></span>
+  <input [(ngModel)]="search" type="text" class="form-control" placeholder="Search">
+  <button type="button" class="btn btn-primary">Search</button>
+</div>-->
+<div class="input-group">
+  <!--<span class="fa fa-search form-control-feedback"></span>-->
+  <input #search type="text" class="form-control" placeholder="Search car names and descriptions">
+  <div class="input-group-append">
+    <button class="btn btn-secondary" type="button">
+      <i class="fa fa-search"></i>
+      <!--Search-->
+    </button>
+  </div>
+</div>
+
+<p class="description" *ngIf="products">Now showing {{products.length}} car{{products.length===1 ? '' : 's'}}.</p>
 
 <table class='table table-striped' aria-labelledby="tableLabel" *ngIf="products">
   <thead>
@@ -10,6 +26,7 @@
       <th>Name</th>
       <th>Price</th>
       <th>Image</th>
+      <th>Description</th>
     </tr>
   </thead>
   <tbody>
@@ -17,6 +34,7 @@
       <td>{{ product.productName }}</td>
       <td>{{ product.unitPrice }}</td>
       <img src="/assets/images/cars/{{product.imagePath}}" />
+      <td>{{ product.description }}</td>
       <input type="hidden" value="{{product.productId}}" />
     </tr>
   </tbody>

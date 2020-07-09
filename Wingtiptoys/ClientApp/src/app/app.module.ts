@@ -28,7 +28,7 @@ import { CarListComponent } from './car-list/car-list.component';
       { path: '', component: HomeComponent, pathMatch: 'full' },
       { path: 'counter', component: CounterComponent },
       { path: 'fetch-data', component: FetchDataComponent },
-      { path: 'car-list', component: CarListComponent },
+      { path: 'cars', component: CarListComponent },
     ])
   ],
   providers: [],
