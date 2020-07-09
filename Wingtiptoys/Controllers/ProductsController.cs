@@ -22,9 +22,20 @@ namespace Wingtiptoys.Controllers
 
         // GET: api/Products
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Products>>> GetProducts()
+        public async Task<IActionResult> GetProducts([FromQuery] ProductFilter filter)
         {
-            return await _context.Products.ToListAsync();
+            if (string.IsNullOrEmpty(filter.CategoryName))
+            {
+                return Ok(await _context.Products.ToListAsync());
+            }
+            else
+            {
+                return Ok(await _context.Categories
+                    .Include(p => p.Products)
+                    .Where(p => p.CategoryName == filter.CategoryName)
+                    .Select(c => c.Products)
+                    .ToListAsync());
+            }
         }
 
         // GET: api/Products/5
