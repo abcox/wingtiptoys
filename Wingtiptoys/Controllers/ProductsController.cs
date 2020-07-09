@@ -9,8 +9,8 @@ using Wingtiptoys.Models;
 
 namespace Wingtiptoys.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("[controller]")]
     public class ProductsController : ControllerBase
     {
         private readonly wingtiptoysContext _context;
@@ -30,11 +30,16 @@ namespace Wingtiptoys.Controllers
             }
             else
             {
-                return Ok(await _context.Categories
-                    .Include(p => p.Products)
-                    .Where(p => p.CategoryName == filter.CategoryName)
-                    .Select(c => c.Products)
-                    .ToListAsync());
+                //return Ok(await _context.Categories
+                //    .Include(p => p.Products)
+                //    .Where(p => p.CategoryName == filter.CategoryName)
+                //    .Select(c => c.Products)
+                //    .ToListAsync());
+                return Ok(from p in await _context.Products
+                          .Include(p => p.Category)
+                          .Where(p => p.Category.CategoryName.Equals(filter.CategoryName))
+                          .ToListAsync()
+                          select p);
             }
         }
 

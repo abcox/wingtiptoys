@@ -1,0 +1,23 @@
+<h1 id="tableLabel">Cars</h1>
+
+<p>Here we have {{products.length}} car{{products.length===1 ? '' : 's'}}.</p>
+
+<p *ngIf="!products"><em>Loading...</em></p>
+
+<table class='table table-striped' aria-labelledby="tableLabel" *ngIf="products">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Price</th>
+      <th>Image</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let product of products">
+      <td>{{ product.productName }}</td>
+      <td>{{ product.unitPrice }}</td>
+      <img src="/assets/images/cars/{{product.imagePath}}" />
+      <input type="hidden" value="{{product.productId}}" />
+    </tr>
+  </tbody>
+</table>
