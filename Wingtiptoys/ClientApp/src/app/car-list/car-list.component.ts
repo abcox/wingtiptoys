@@ -1,13 +1,18 @@
 import { Component, Inject, ElementRef, ViewChild, OnInit, AfterViewInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { of } from "rxjs";
+import { FormControl } from '@angular/forms';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { fromEvent, of, Subject, Observable, pipe, timer } from "rxjs";
 import {
   debounceTime,
   map,
   distinctUntilChanged,
-  filter
+  filter,
+  switchMap,
+  tap,
 } from "rxjs/operators";
-import { fromEvent } from 'rxjs';
+
+const productCategoryName = "Cars";
+const minimumSearchTermLength = 2;
 
 @Component({
   selector: 'app-car-list',
@@ -15,49 +20,68 @@ import { fromEvent } from 'rxjs';
   styleUrls: ['./car-list.component.scss']
 })
 export class CarListComponent implements AfterViewInit {
-  public products: Product[];
-  @ViewChild('search', { static: true }) search: ElementRef;
+  public $products: Observable<Product[]>;
+  searchInput$ = new Subject<string>();
+  private searchField: FormControl;
+  private loading: boolean = false;
 
-  constructor(
+  constructor (
     private http: HttpClient,
     @Inject('BASE_URL') private baseUrl: string
   ) {
-    this.http.get<Product[]>(this.baseUrl + `products?categoryName=Cars`).subscribe(result => {
-      this.products = result;
-    }, error => {
-      console.error(error)
-    });
+
+    // https://codecraft.tv/courses/angular/http/http-with-observables/
+    // https://medium.com/angular-in-depth/rxjs-live-search-the-devil-is-in-the-detail-119637186427
+    // https://www.positronx.io/handle-angular-http-requests-with-observables/
+
+    //this.searchField = new FormControl();
+
+    //const onCarsLoadSuccess = matchingCars => console.log(matchingCars);
+
+    //this.$products = this.searchField.valueChanges.pipe(
+
+    this.$products = this.searchInput$.pipe(
+      //filter(phrase => phrase.length >= 2),
+      debounceTime(400),
+      distinctUntilChanged(),
+      tap(term => {
+        this.loading = true;
+        console.log('term: ', term);
+      }),
+      switchMap(term => this.getCars(term)),
+      tap(_ => this.loading = false)
+    );
+  }
+
+  search(input?: string) {
+    console.log('search: ', input);
+    this.searchInput$.next(input);
+  }
+
+  getCars(searchString?: string): Observable<Product[]> {
+    console.log('searchString: ', searchString);
+    let params = new HttpParams().set("categoryName", productCategoryName);
+    if (searchString && searchString.length >= minimumSearchTermLength) {
+      params = params.append("search", searchString);
+    }
+    return this.http.get<Product[]>(`${this.baseUrl}products`, { params });
   }
 
   ngAfterViewInit() {
-
-    // on keyup event of search input
-    fromEvent(this.search.nativeElement, 'keyup').pipe(
-
-      // get value
-      map((event: any) => {
-        return event.target.value;
-      })
-      // if character length greater than 2
-      // do not do this here, rather make minimum search string length a determiner of whether we are searching or not (bringing all items)...
-      //, filter(res => res.length > 2)
-
-      // more about hystersis and why debounce: https://my.eng.utah.edu/~cs5780/debouncing.pdf
-      , debounceTime(1000)
-
-      // filter for actual change; therefore, filter any inputs that are the same as the last
-      , distinctUntilChanged()
-
-      // subscribe to the response
-    ).subscribe((search: string) => {
-      let searchParam = search.length < 2 ? '' : `&search=${search}`;
-      this.http.get<Product[]>(this.baseUrl + `products?categoryName=Cars${searchParam}`).subscribe(result => {
-        this.products = result;
-      }, error => {
-        console.error(error)
-      });
-    });
+    timer(1000).subscribe(() => { this.search("d"); console.log('1'); });
+    timer(2000).subscribe(() => { this.search(" "); console.log('2'); });
+    timer(3000).subscribe(() => { this.search(""); console.log('3'); });
   }
+
+  // https://alligator.io/angular/real-time-search-angular-rxjs/
+  //search(searchString$: Observable<string>) {
+  //  return searchString$.pipe(
+  //    debounceTime(1000),
+  //    distinctUntilChanged(),
+  //    switchMap(searchString => this.getCars(searchString))
+  //  );
+  //}
+
 }
 
 export interface Product {

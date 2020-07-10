@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Wingtiptoys.Models;
+using Wingtiptoys.Repositories;
 
 namespace Wingtiptoys.Controllers
 {
@@ -13,34 +14,23 @@ namespace Wingtiptoys.Controllers
     [Route("[controller]")]
     public class ProductsController : ControllerBase
     {
-        private readonly wingtiptoysContext _context;
+        private readonly wingtiptoysContext _context;       // todo: remove and use repository
+        private readonly IProductRepository _repository;    // todo: remove and use MediatR
 
-        public ProductsController(wingtiptoysContext context)
+        public ProductsController(
+            wingtiptoysContext context,
+            IProductRepository productRepository
+            )
         {
             _context = context;
+            _repository = productRepository;
         }
 
         // GET: api/Products
         [HttpGet]
         public async Task<IActionResult> GetProducts([FromQuery] ProductFilter filter, string search)
         {
-            IQueryable<Products> products = _context.Products;
-
-            if (!string.IsNullOrEmpty(filter.CategoryName))
-            {
-                products =
-                    from p in products
-                    .Include(p => p.Category)
-                    .Where(p => p.Category.CategoryName.Equals(filter.CategoryName))
-                    select p;
-            }
-            if (!string.IsNullOrEmpty(search) && search.Length >= 2)
-            {
-                products = from p in products
-                           where p.ProductName.Contains(search) || p.Description.Contains(search)
-                           select p;
-            }
-            return Ok(await products.ToListAsync());
+            return Ok(await _repository.getProducts(filter, search));
         }
 
         // GET: api/Products/5

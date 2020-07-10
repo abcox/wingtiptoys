@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30011.22
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wingtiptoys", "Wingtiptoys\Wingtiptoys.csproj", "{B81444E3-498A-41F0-B866-58BD190702BE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wingtiptoys", "Wingtiptoys\Wingtiptoys.csproj", "{B81444E3-498A-41F0-B866-58BD190702BE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wingtiptoys.Test", "Wingtiptoys.Test\Wingtiptoys.Test.csproj", "{23F7678A-7687-4789-A29B-6E7B2CE40E3C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{B81444E3-498A-41F0-B866-58BD190702BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B81444E3-498A-41F0-B866-58BD190702BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B81444E3-498A-41F0-B866-58BD190702BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{23F7678A-7687-4789-A29B-6E7B2CE40E3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23F7678A-7687-4789-A29B-6E7B2CE40E3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23F7678A-7687-4789-A29B-6E7B2CE40E3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23F7678A-7687-4789-A29B-6E7B2CE40E3C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

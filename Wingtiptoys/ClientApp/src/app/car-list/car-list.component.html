@@ -1,15 +1,15 @@
 <h1 id="tableLabel">Cars</h1>
 
-<p *ngIf="!products"><em>Loading...</em></p>
-
 <div class="form-group has-search">
   <span class="fa fa-search form-control-feedback"></span>
-  <input #search type="text" class="form-control" placeholder="Search">
+  <!--<input type="text" class="form-control" placeholder="Search" [formControl]="searchField">-->
+  <input type="text" class="form-control" placeholder="Search" #searchInput (input)="search(searchInput.value)">
 </div>
 
-<p class="description" *ngIf="products">Now showing {{products.length}} car{{products.length===1 ? '' : 's'}}.</p>
+<!--<p *ngIf="loading"><em>Loading...</em></p>-->
+<p class="description" *ngIf="($products | async)">Now showing {{($products | async)?.length}} car{{($products | async)?.length===1 ? '' : 's'}}.</p>
 
-<table class='table table-striped' aria-labelledby="tableLabel" *ngIf="products">
+<table id="cars-table" class='table table-striped' aria-labelledby="tableLabel">
   <thead>
     <tr>
       <th>Name</th>
@@ -19,7 +19,7 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let product of products">
+    <tr *ngFor="let product of $products | async">
       <td>{{ product.productName }}</td>
       <td>{{ product.unitPrice }}</td>
       <img src="/assets/images/cars/{{product.imagePath}}" />

@@ -3,3 +3,5 @@
 ################################################################################
 
 /.vs/Wingtiptoys
+/Wingtiptoys.Test/bin/Debug/netcoreapp3.1
+/Wingtiptoys.Test/obj
